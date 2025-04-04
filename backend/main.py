@@ -22,7 +22,9 @@ class VideoRequest(BaseModel):
 async def trans_video(request: VideoRequest):
     try:
         if not request.youtube_url.startswith('https://www.youtube.com'):
-            youtube_url = f'https://www.youtube.com/watch?v={request.youtube_url}'  
+            youtube_url = f'https://www.youtube.com/watch?v={request.youtube_url}'
+        else:
+            youtube_url = request.youtube_url
         download_youtube_video(youtube_url)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"视频下载失败: {str(e)}")
