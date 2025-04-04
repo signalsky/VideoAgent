@@ -1,7 +1,7 @@
 import requests
 
 # 定义API的URL
-url = "http://127.0.0.1:3141/trans_vedio"
+url = "http://104.171.203.178:3141/trans_vedio"   # 104.171.203.178
 
 headers = {
     "Content-Type": "application/json"

@@ -33,7 +33,7 @@ def download_youtube_video(youtube_url):
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         result = ydl.download([youtube_url])
         if result == 0:
-            return '/downloads/{video_id}/{video_id}.mp4', result
+            return f'/downloads/{video_id}/{video_id}.mp4', result
         else:
             return '', result
 
