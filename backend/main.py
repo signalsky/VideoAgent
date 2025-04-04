@@ -25,7 +25,7 @@ async def trans_video(request: VideoRequest):
             youtube_url = f'https://www.youtube.com/watch?v={request.youtube_url}'
         else:
             youtube_url = request.youtube_url
-        file_link, status = download_youtube_video(youtube_url)
+        file_link, status = await download_youtube_video(youtube_url)
         return {
             "status": status,
             "file_link": file_link,

@@ -1,4 +1,6 @@
 **/.env/
 *.log
+*.mp4
+*.mp3
 **/node_modules/
 **/__pycache__/

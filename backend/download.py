@@ -21,7 +21,7 @@ def get_youtube_video_id(youtube_url):
     return None
 
 
-def download_youtube_video(youtube_url):
+async def download_youtube_video(youtube_url):
     video_id = get_youtube_video_id(youtube_url)
     base_path = Path(DOWNLOAD_DIR) / video_id
     base_path.mkdir(parents=True, exist_ok=True)
