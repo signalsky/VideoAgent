@@ -24,11 +24,10 @@ def get_youtube_video_id(youtube_url):
 def download_youtube_video(youtube_url):
     video_id = get_youtube_video_id(youtube_url)
     base_path = Path(DOWNLOAD_DIR) / video_id
-    if not os.path.exists(base_path ):
-        os.makedirs(base_path)
+    base_path.mkdir(parents=True, exist_ok=True)
     full_path = base_path / f'{video_id}.mp4'
     ydl_opts = {
-        'outtmpl': full_path
+        'outtmpl':str(full_path)
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([youtube_url])
