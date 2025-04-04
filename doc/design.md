@@ -13,6 +13,6 @@
 
 # 技术选择
 
-1. 前端使用VUE、后端使用FastAPI，yt-dlp
+1. 前端使用VUE、后端使用FastAPI，yt_dlp
 2. 模型选择GPT-4o-mini-tts、gpt-4o-mini-transcribe
 3. 前端使用轮询的方式等待下载链接，避免网络等原因，通知丢失造成没获取到下载链接
