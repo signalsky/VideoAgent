@@ -3,6 +3,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from download import DOWNLOAD_DIR, download_youtube_video
+from video_processor import process_video
+from ai import audio_to_txt
 
 app = FastAPI()
 
@@ -25,10 +27,14 @@ async def trans_video(request: VideoRequest):
             youtube_url = f'https://www.youtube.com/watch?v={request.youtube_url}'
         else:
             youtube_url = request.youtube_url
-        file_link, status = await download_youtube_video(youtube_url)
+        video_path, status = await download_youtube_video(youtube_url)
+        video_no_subtitle_no_vocal_output_path, audio_output_path = process_video(video_path)
+        srt_file = os.path.join(os.path.dirname(video_path), 'subtitles.srt')
+        audio_cn = os.path.join(os.path.dirname(audio_output_path), 'cn.mp3')
+        audio_to_txt(audio_output_path, srt_file, audio_cn)
         return {
             "status": status,
-            "file_link": file_link,
+            "file_link": '',
             "message": "视频下载成功" if status == 0 else "视频下载失败"
         }
     except Exception as e:

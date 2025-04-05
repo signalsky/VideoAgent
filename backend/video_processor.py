@@ -32,6 +32,7 @@ def extract_vocal(video_path, output_video_path, name):
     accompaniment_path = os.path.join(output_dir, base_name, "accompaniment.mp3")
     subprocess.run([
         "ffmpeg",
+        "-y",  # 强制覆盖输出文件
         "-i", video_path,
         "-i", accompaniment_path,
         "-map", "0:v",  # 原视频画面
@@ -56,6 +57,80 @@ def process_video(video_path):
     print(f"视频去除人声 {video_no_subtitle_no_vocal_output_path}")
     return video_no_subtitle_no_vocal_output_path, audio_output_path
 
+
+def merge_media(
+    input_video: str,    # 无人声的视频文件路径
+    input_audio: str,    # 需要合并的音频文件路径
+    input_subtitle: str, # 字幕文件路径 (支持.srt/.ass)
+    output_path: str,    # 输出文件路径
+    font_path: str = None,  # 中文字体路径 (解决乱码问题)
+    resolution: str = "copy",  # 输出分辨率，例如 "1920x1080" 或 "copy"
+    crf: int = 23            # 视频质量参数 (0-51, 越小质量越高)
+) -> None:
+    """
+    三合一媒体合并函数
+    """
+    
+    # 输入文件校验
+    for path in [input_video, input_audio, input_subtitle]:
+        if not Path(path).exists():
+            raise FileNotFoundError(f"输入文件不存在: {path}")
+    
+    # FFmpeg 基础命令
+    cmd = [
+        "ffmpeg",
+        "-y",  # 覆盖已存在文件
+        "-i", input_video,
+        "-i", input_audio,
+    ]
+    
+    # 字幕处理参数
+    subtitle_filter = f"subtitles='{input_subtitle}'"
+    if font_path:
+        subtitle_filter += f":force_style='FontName={Path(font_path).name}'"
+    
+    # 视频处理滤镜链
+    filter_complex = [
+        "[0:v] " + subtitle_filter + " [v]",  # 视频流叠加字幕
+        "[1:a] apad [a]"                     # 音频流填充静音保证对齐
+    ]
+    
+    # 构建完整命令
+    cmd += [
+        "-filter_complex", "; ".join(filter_complex),
+        "-map", "[v]",
+        "-map", "[a]",
+        "-c:v", "libx264" if resolution != "copy" else "copy",
+        "-crf", str(crf),
+        "-preset", "medium",
+        "-c:a", "aac",
+        "-b:a", "192k",
+        "-shortest"  # 以最短的流为准
+    ]
+    
+    # 分辨率设置
+    if resolution != "copy":
+        cmd += ["-s", resolution]
+    
+    # 字体嵌入 (解决乱码问题)
+    if font_path:
+        cmd += ["-attach", font_path, "-metadata:s:t:0", "mimetype=application/x-truetype-font"]
+    
+    cmd += [output_path]
+    
+    # 执行命令
+    try:
+        subprocess.run(
+            cmd,
+            check=True,
+            stderr=subprocess.PIPE,
+            universal_newlines=True
+        )
+        print(f"合并成功！输出文件: {output_path}")
+    except subprocess.CalledProcessError as e:
+        print("合并失败，错误信息:")
+        print(e.stderr)
+        raise
 
 
 if __name__ == "__main__":
