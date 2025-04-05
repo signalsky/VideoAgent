@@ -30,4 +30,4 @@ def audio_to_txt(original_audio_file):
 
 
 if __name__ == "__main__":
-    audio_to_txt("./downloads/GAoR9ji8D6A_audio.mp3")
+    audio_to_txt("./downloads/GAoR9ji8D6A/GAoR9ji8D6A_audio/vocals.mp3")
