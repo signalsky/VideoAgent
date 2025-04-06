@@ -64,7 +64,7 @@ def merge_media(
     input_subtitle: str, # 字幕文件路径 (支持.srt/.ass)
     output_path: str,    # 输出文件路径
     resolution: str = "libx264",  # 输出分辨率，例如 "1920x1080" 或 "copy"
-    crf: int = 23            # 视频质量参数 (0-51, 越小质量越高)
+    crf: int = 26            # 视频质量参数 (0-51, 越小质量越高)
 ) -> None:
     """
     三合一媒体合并函数

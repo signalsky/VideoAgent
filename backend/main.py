@@ -6,7 +6,12 @@ from download import DOWNLOAD_DIR, download_youtube_video
 from video_processor import process_video, merge_media
 from ai import audio_to_txt
 
-app = FastAPI()
+# 创建 FastAPI 实例并添加自定义配置
+app = FastAPI(
+    title="视频处理 API",
+    description="这是一个用于处理 YouTube 视频的 API，包括下载、处理和合并等功能。",
+    version="1.0.0"
+)
 
 # 定义视频保存的目录
 if not os.path.exists(DOWNLOAD_DIR):
