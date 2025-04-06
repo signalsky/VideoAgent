@@ -11,7 +11,7 @@ headers = {
 def test_trans_vedio(download):
     # 定义请求体，确保参数名和类型正确
     data = {
-        "youtube_url": "https://www.youtube.com/watch?v=GAoR9ji8D6A"
+        "youtube_url": "https://www.youtube.com/watch?v=uy8mOp84KzU"
     }
 
     # 发送POST请求

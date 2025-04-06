@@ -63,13 +63,14 @@ def merge_media(
     input_audio: str,    # 需要合并的音频文件路径
     input_subtitle: str, # 字幕文件路径 (支持.srt/.ass)
     output_path: str,    # 输出文件路径
-    font_path: str = None,  # 中文字体路径 (解决乱码问题)
-    resolution: str = "copy",  # 输出分辨率，例如 "1920x1080" 或 "copy"
+    resolution: str = "libx264",  # 输出分辨率，例如 "1920x1080" 或 "copy"
     crf: int = 23            # 视频质量参数 (0-51, 越小质量越高)
 ) -> None:
     """
     三合一媒体合并函数
     """
+
+    print("视频、音频、字幕三合一")
     
     # 输入文件校验
     for path in [input_video, input_audio, input_subtitle]:
@@ -86,8 +87,6 @@ def merge_media(
     
     # 字幕处理参数
     subtitle_filter = f"subtitles='{input_subtitle}'"
-    if font_path:
-        subtitle_filter += f":force_style='FontName={Path(font_path).name}'"
     
     # 视频处理滤镜链
     filter_complex = [
@@ -100,7 +99,7 @@ def merge_media(
         "-filter_complex", "; ".join(filter_complex),
         "-map", "[v]",
         "-map", "[a]",
-        "-c:v", "libx264" if resolution != "copy" else "copy",
+        "-c:v", resolution,
         "-crf", str(crf),
         "-preset", "medium",
         "-c:a", "aac",
@@ -109,12 +108,8 @@ def merge_media(
     ]
     
     # 分辨率设置
-    if resolution != "copy":
-        cmd += ["-s", resolution]
-    
-    # 字体嵌入 (解决乱码问题)
-    if font_path:
-        cmd += ["-attach", font_path, "-metadata:s:t:0", "mimetype=application/x-truetype-font"]
+    # if resolution != "copy":
+    #     cmd += ["-s", resolution]
     
     cmd += [output_path]
     
@@ -134,4 +129,8 @@ def merge_media(
 
 
 if __name__ == "__main__":
-    process_video("downloads/GAoR9ji8D6A/GAoR9ji8D6A.mp4")
+    # process_video("downloads/GAoR9ji8D6A/GAoR9ji8D6A.mp4")
+    merge_media("downloads/GAoR9ji8D6A/GAoR9ji8D6A.mp4",            
+                "./downloads/GAoR9ji8D6A/GAoR9ji8D6A_audio/cn.mp3",
+                "./downloads/GAoR9ji8D6A/subtitles.srt",
+                "./downloads/GAoR9ji8D6A/GAoR9ji8D6A_cn.mp4")
