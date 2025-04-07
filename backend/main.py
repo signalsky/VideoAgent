@@ -33,12 +33,12 @@ async def trans_video(request: VideoRequest):
         else:
             youtube_url = request.youtube_url
         video_path, video_id, status = await download_youtube_video(youtube_url)
-        video_no_subtitle_no_vocal_output_path, audio_output_path = process_video(video_path)
+        audio_output_path, accompaniment_path = process_video(video_path)
         srt_file = os.path.join(os.path.dirname(video_path), 'subtitles.srt')
         audio_cn = os.path.join(os.path.dirname(audio_output_path), 'cn.mp3')
         audio_to_txt(audio_output_path, srt_file, audio_cn)
-        os.path.join(os.path.dirname(video_path), f'{video_id}_cn.mp4')
-        merge_media(video_no_subtitle_no_vocal_output_path, audio_cn, srt_file)
+        output_path = os.path.join(os.path.dirname(video_path), f'{video_id}_cn.mp4')
+        merge_media(video_path, audio_cn, accompaniment_path, srt_file, output_path)
         return {
             "status": status,
             "file_link": f'/downloads/{video_id}/{video_id}_cn.mp4',
